@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Put It into Focus Practice - Genius Unit 6</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Times New Roman', Times, serif;
+    background: linear-gradient(135deg, #002080 0%, #0047AB 50%, #002080 100%);
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+
+  h1 {
+    font-size: 3.6rem;
+    margin-bottom: 8px;
+    text-align: center;
+    background: linear-gradient(90deg, #ffd166, #ff9f1c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+  }
+
+  .subtitle { font-size: 2rem; color: #ddd; margin-bottom: 14px; text-align: center; }
+
+  .nav-row { margin-bottom: 18px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .nav-link {
+    color: #ffd166; text-decoration: none; font-size: 1.8rem;
+    border: 1px solid rgba(255,209,102,.4); padding: 8px 20px;
+    border-radius: 16px; transition: all .2s;
+  }
+  .nav-link:hover { background: rgba(255,209,102,.15); color: #fff; }
+
+  .card {
+    background: rgba(255,255,255,.07); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.12); border-radius: 16px;
+    padding: 28px; width: 100%; max-width: 880px; margin-bottom: 18px;
+  }
+
+  .card-title { font-size: 1.9rem; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd166; margin-bottom: 14px; }
+
+  .grammar-note {
+    background: rgba(0,0,0,.25); border-left: 4px solid #ffd166;
+    border-radius: 6px; padding: 14px 18px; margin-bottom: 14px;
+    font-size: 1.9rem; line-height: 1.8; color: #f0f0f0;
+  }
+  .grammar-note b { color: #ffd166; }
+
+  .toggle-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+  .toggle-row > span { font-size: 1.9rem; color: #ccc; }
+
+  .toggle-btn {
+    padding: 10px 20px; border: 1px solid rgba(255,255,255,.25);
+    border-radius: 20px; background: transparent; color: #ddd;
+    font-size: 1.9rem; font-family: 'Times New Roman', Times, serif;
+    cursor: pointer; transition: all .2s;
+  }
+  .toggle-btn:hover { border-color: #ffd166; color: #fff; }
+  .toggle-btn.active {
+    background: linear-gradient(135deg, #ff9f1c, #ffd166);
+    border-color: transparent; color: #1a2a6c; font-weight: 600;
+  }
+
+  .control-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .control-row label { font-size: 1.9rem; color: #ccc; white-space: nowrap; }
+  .control-row select {
+    flex: 1; min-width: 0; padding: 8px 12px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.3);
+    color: #fff; font-size: 1.9rem; font-family: 'Times New Roman', Times, serif; appearance: auto;
+  }
+  .control-row select option { background: #002080; color: #fff; }
+
+  .speed-btn {
+    padding: 8px 16px; border: 1px solid rgba(255,255,255,.2);
+    border-radius: 16px; background: transparent; color: #ccc;
+    font-size: 1.7rem; font-family: 'Times New Roman', Times, serif;
+    cursor: pointer; transition: all .2s;
+  }
+  .speed-btn:hover { border-color: #ffd166; color: #fff; }
+  .speed-btn.active {
+    background: linear-gradient(135deg, #ff9f1c, #ffd166);
+    border-color: transparent; color: #1a2a6c; font-weight: 600;
+  }
+
+  .sentence-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .sentence-item {
+    background: rgba(0,0,0,.25); border-radius: 12px; padding: 20px;
+    border: 1px solid rgba(255,255,255,.08); transition: border .2s;
+  }
+  .sentence-item.active { border-color: #ffd166; }
+
+  .sentence-number { font-size: 1.6rem; color: #ffd166; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+
+  .sentence-text-en { font-size: 2.4rem; line-height: 1.7; margin-bottom: 8px; transition: filter .3s; }
+  .sentence-text-ja { font-size: 2rem; color: #ccc; line-height: 1.7; transition: filter .3s; }
+  .sentence-text-en.hidden-text, .sentence-text-ja.hidden-text { filter: blur(7px); user-select: none; }
+  .sentence-text-en.lang-hidden, .sentence-text-ja.lang-hidden { display: none; }
+
+  .sentence-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+
+  .mini-btn {
+    padding: 10px 20px; border: 1px solid rgba(255,255,255,.2);
+    border-radius: 18px; background: rgba(0,0,0,.3); color: #fff;
+    font-size: 1.8rem; font-family: 'Times New Roman', Times, serif;
+    cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 6px;
+  }
+  .mini-btn:hover { border-color: #ffd166; background: rgba(255,209,102,.15); }
+  .mini-btn.play { color: #ffd166; }
+  .mini-btn.record { color: #ff8a80; }
+  .mini-btn.record.recording {
+    background: linear-gradient(135deg, #e53935, #ff6f00);
+    border-color: transparent; color: #fff; animation: pulse 1.5s infinite;
+  }
+  .mini-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(229,57,53,.6); }
+    50%      { box-shadow: 0 0 0 10px rgba(229,57,53,0); }
+  }
+
+  .sentence-result { margin-top: 14px; padding: 14px; border-radius: 8px; background: rgba(0,0,0,.3); display: none; }
+  .sentence-result.show { display: block; }
+
+  .result-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+  .result-score { font-size: 2.6rem; font-weight: 700; }
+  .result-grade { font-size: 1.9rem; }
+
+  .result-detail { font-size: 2rem; line-height: 1.8; padding: 10px; background: rgba(0,0,0,.25); border-radius: 6px; }
+  .result-detail .match { color: #4caf50; }
+  .result-detail .miss  { color: #ef5350; text-decoration: line-through; }
+  .result-detail .heard { color: #bbb; font-size: 1.7rem; margin-top: 8px; }
+
+  .tip-text { font-size: 1.8rem; color: #bbb; margin-top: 14px; text-align: center; line-height: 1.6; }
+
+  .warning {
+    background: rgba(255,152,0,.15); border: 1px solid rgba(255,152,0,.4);
+    border-radius: 10px; padding: 16px; font-size: 1.9rem; color: #ffb74d;
+    margin-bottom: 18px; max-width: 880px; width: 100%; text-align: center;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.4rem; }
+    .sentence-text-en { font-size: 1.7rem; }
+    .sentence-text-ja { font-size: 1.5rem; }
+    .card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Put It into Focus Practice</h1>
+<p class="subtitle">Genius English Communication II — Part I Unit 6（助動詞）</p>
+<div class="nav-row">
+  <a class="nav-link" href="index.html">← Unit 6 Model Shadowing</a>
+</div>
+
+<div id="browserWarning" class="warning hidden">
+  録音・採点機能はChrome / Edgeブラウザでの使用を推奨します。
+</div>
+
+<div class="card">
+  <div class="card-title">Grammar Focus</div>
+  <div class="grammar-note">
+    助動詞を用いることで、自身の考えや気持ち、判断など、動詞に主観的なニュアンスを加えることができます。<br><br>
+    <b>❶ 意志：will / would</b>：「～するつもりだ」という意志を表す。Will [Would] you ...? で「～してくれる［くださいますか］？」という依頼も表せる。<br>
+    <b>❷ 推量：might / may / could / should / must / can't</b>：「～かもしれない」「～のはずだ」「～にちがいない」「～のはずがない」など、確信の度合いを表す。<br>
+    <b>❸ 義務・必要性：must / have to / should / ought to</b>：「～しなければならない」「～すべきだ」を表す。You must .... は強制のニュアンスが強いので、目上の人には使わない方が良い。<br>
+    <b>＋ 断定を避ける（話し言葉）：I think / I feel / I believe</b>：「…と考える」「…と感じている」という動詞でも考えや気持ちを表せる。I feel は I think よりさらに控えめな印象を与え、I believe は I think より堅い印象を与える。
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Display Settings</div>
+  <div class="toggle-row">
+    <span>言語：</span>
+    <button class="toggle-btn active" id="btnShowEn" onclick="toggleLang('en')">English</button>
+    <button class="toggle-btn active" id="btnShowJa" onclick="toggleLang('ja')">Japanese</button>
+  </div>
+  <div class="toggle-row">
+    <span>表示：</span>
+    <button class="toggle-btn active" id="btnVisible" onclick="toggleVisibility()">Show / Hide</button>
+  </div>
+  <div class="control-row">
+    <label>Voice:</label>
+    <select id="voiceSelect">
+      <option value="samantha" selected>Samantha (US Female)</option>
+      <option value="daniel">Daniel (UK Male)</option>
+      <option value="karen">Karen (AU Female)</option>
+    </select>
+  </div>
+  <div class="control-row">
+    <label>Speed:</label>
+    <button class="speed-btn" onclick="setSpeed(0.6)">0.6×</button>
+    <button class="speed-btn" onclick="setSpeed(0.7)">0.7×</button>
+    <button class="speed-btn active" onclick="setSpeed(0.8)">0.8×</button>
+    <button class="speed-btn" onclick="setSpeed(0.9)">0.9×</button>
+    <button class="speed-btn" onclick="setSpeed(1.0)">1.0×</button>
+    <button class="speed-btn" onclick="setSpeed(1.2)">1.2×</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Example Sentences</div>
+  <div class="sentence-list" id="sentenceList"></div>
+  <p class="tip-text">▶ Play で音声を聴き、● Record で話してから停止すると採点されます。🎧 ヘッドフォン推奨</p>
+</div>
+
+<script>
+const sentences = [
+  { en: "I'll text you as soon as I arrive in Hong Kong.",
+    ja: "香港に着いたらすぐメールするよ。",
+    type: "❶ 意志（will）" },
+  { en: "Will you pass me the pepper?",
+    ja: "コショウを取ってくれる？",
+    type: "❶ 依頼（Will you ...?）" },
+  { en: "Would you pass me the pepper?",
+    ja: "コショウを取ってくださいますか？",
+    type: "❶ 依頼（Would you ...?・より丁寧）" },
+  { en: "Our team might win the match.",
+    ja: "私たちのチームはその試合に勝つかもしれない。",
+    type: "❷ 推量（might / may / could）" },
+  { en: "He should be back home by now.",
+    ja: "彼は今頃は家に帰っているはずだ。",
+    type: "❷ 推量（should）" },
+  { en: "He must be tired after his long trip.",
+    ja: "長旅の後で彼は疲れているにちがいない。",
+    type: "❷ 推量（must）" },
+  { en: "He can't be wrong.",
+    ja: "彼が間違っているはずがない。",
+    type: "❷ 推量（can't）" },
+  { en: "\"Do you want to go shopping?\" \"I'd love to, but I must do my homework.\"",
+    ja: "「ショッピングに行かない？」「行きたいけど宿題をしないといけない。」",
+    type: "❸ 義務・必要性（must / have to）" },
+  { en: "Everyone should learn how to cook.",
+    ja: "誰もが料理の仕方を学ぶべきだ。",
+    type: "❸ 義務・必要性（should / ought to）" },
+  { en: "I think Yumi will come soon.",
+    ja: "ユミはすぐに来ると思います。",
+    type: "＋ 断定を避ける（I think / I feel / I believe）" },
+  { en: "I will try to keep you smiling as much as I can.",
+    ja: "私はできるだけあなたの笑顔を絶やさないようにします。",
+    type: "❶ 意志（will）（応用・Work It Out 1）" },
+  { en: "You must not blame yourself too much.",
+    ja: "あまり自分を責めすぎてはいけません。",
+    type: "❸ 義務・必要性（must not）（応用・Work It Out 2）" },
+  { en: "This might be the chance you have been looking for.",
+    ja: "これが君の求めていたチャンスかもしれない。",
+    type: "❷ 推量（might）（応用・Work It Out 3）" }
+];
+
+let showEn=true, showJa=true, textVisible=true, playbackSpeed=0.8;
+let currentSynth=null;
+const recState={};
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(!window.SpeechRecognition&&!window.webkitSpeechRecognition)
+    document.getElementById('browserWarning').classList.remove('hidden');
+  renderSentences();
+  if(speechSynthesis){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }
+});
+
+function renderSentences(){
+  const list=document.getElementById('sentenceList');
+  list.innerHTML='';
+  sentences.forEach((s,i)=>{
+    const item=document.createElement('div');
+    item.className='sentence-item';
+    item.id='item-'+i;
+    item.innerHTML=`
+      <div class="sentence-number">${String(i+1).padStart(2,'0')} · ${s.type}</div>
+      <div class="sentence-text-en ${showEn?'':'lang-hidden'} ${textVisible?'':'hidden-text'}" id="en-${i}">${s.en}</div>
+      <div class="sentence-text-ja ${showJa?'':'lang-hidden'} ${textVisible?'':'hidden-text'}" id="ja-${i}">${s.ja}</div>
+      <div class="sentence-actions">
+        <button class="mini-btn play" onclick="playSentence(${i})">▶ Play</button>
+        <button class="mini-btn record" id="rec-btn-${i}" onclick="toggleRecord(${i})">● Record &amp; Score</button>
+      </div>
+      <div class="sentence-result" id="result-${i}"></div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function toggleLang(lang){
+  if(lang==='en'){showEn=!showEn;document.getElementById('btnShowEn').classList.toggle('active',showEn);}
+  else{showJa=!showJa;document.getElementById('btnShowJa').classList.toggle('active',showJa);}
+  sentences.forEach((_,i)=>{
+    document.getElementById('en-'+i).classList.toggle('lang-hidden',!showEn);
+    document.getElementById('ja-'+i).classList.toggle('lang-hidden',!showJa);
+  });
+}
+
+function toggleVisibility(){
+  textVisible=!textVisible;
+  document.getElementById('btnVisible').classList.toggle('active',textVisible);
+  sentences.forEach((_,i)=>{
+    document.getElementById('en-'+i).classList.toggle('hidden-text',!textVisible);
+    document.getElementById('ja-'+i).classList.toggle('hidden-text',!textVisible);
+  });
+}
+
+function setSpeed(speed){
+  playbackSpeed=speed;
+  document.querySelectorAll('.speed-btn').forEach(btn=>{
+    btn.classList.toggle('active',parseFloat(btn.textContent)===speed);
+  });
+}
+
+function pickVoice(){
+  const voices=speechSynthesis.getVoices();
+  const en=voices.filter(v=>v.lang.startsWith('en'));
+  if(!en.length) return null;
+  const prio=['Google US English','Google UK English Female','Microsoft Aria',
+    'Microsoft Jenny','Microsoft Zira','Samantha','Karen','Moira','Tessa','Daniel','Alex'];
+  for(const name of prio){const v=en.find(v=>v.name.includes(name));if(v) return v;}
+  return en.find(v=>!v.localService)||en[0];
+}
+
+function playSentence(index){
+  if(currentSynth){speechSynthesis.cancel();currentSynth=null;}
+  const u=new SpeechSynthesisUtterance(sentences[index].en);
+  const voice=pickVoice(); if(voice) u.voice=voice;
+  u.lang='en-US'; u.rate=playbackSpeed; u.pitch=1.0;
+  currentSynth=u;
+  u.onend=()=>{currentSynth=null;};
+  speechSynthesis.speak(u);
+}
+
+async function toggleRecord(index){
+  const state=recState[index];
+  if(state&&state.recording) stopRecord(index);
+  else await startRecord(index);
+}
+
+async function startRecord(index){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('このブラウザは音声認識に対応していません。Chromeをご利用ください。');return;}
+  if(currentSynth){speechSynthesis.cancel();currentSynth=null;}
+  document.getElementById('result-'+index).classList.remove('show');
+  document.getElementById('result-'+index).innerHTML='';
+  recState[index]={recording:true,finalTranscript:'',interim:'',recognition:null,failed:false};
+  const btn=document.getElementById('rec-btn-'+index);
+  btn.classList.add('recording');
+  btn.innerHTML='■ Stop &amp; Score';
+  document.getElementById('item-'+index).classList.add('active');
+  function createRec(){
+    const rec=new SR();
+    rec.lang='en-US'; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=1;
+    rec.onresult=e=>{
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal) recState[index].finalTranscript+=e.results[i][0].transcript+' ';
+        else interim+=e.results[i][0].transcript;
+      }
+      recState[index].interim=interim;
+    };
+    rec.onend=()=>{
+      const st=recState[index];
+      if(st&&st.recording&&!st.failed){
+        setTimeout(()=>{
+          const st2=recState[index];
+          if(st2&&st2.recording){st2.recognition=createRec();try{st2.recognition.start();}catch(e){}}
+        },200);
+      }
+    };
+    rec.onerror=e=>{
+      if(e.error==='no-speech'||e.error==='aborted') return;
+      if(e.error==='not-allowed'){if(recState[index])recState[index].failed=true;alert('マイクの許可が必要です。');}
+    };
+    return rec;
+  }
+  recState[index].recognition=createRec();
+  try{recState[index].recognition.start();}catch(e){}
+}
+
+function stopRecord(index){
+  const state=recState[index];
+  if(!state) return;
+  state.recording=false;
+  if(state.recognition){
+    try{state.recognition.onend=null;state.recognition.stop();}
+    catch(e){try{state.recognition.abort();}catch(e2){}}
+  }
+  const spoken=(state.finalTranscript+state.interim).trim();
+  const btn=document.getElementById('rec-btn-'+index);
+  btn.classList.remove('recording');
+  btn.innerHTML='● Record &amp; Score';
+  document.getElementById('item-'+index).classList.remove('active');
+  setTimeout(()=>{
+    const finalSpoken=(state.finalTranscript+state.interim).trim()||spoken;
+    showSentenceResult(index,finalSpoken);
+  },400);
+}
+
+function showSentenceResult(index,spokenText){
+  const resultEl=document.getElementById('result-'+index);
+  if(!spokenText){
+    resultEl.classList.add('show');
+    resultEl.innerHTML='<div style="color:#ff9800;font-size:1.9rem;">音声が検出されませんでした。マイクの許可を確認してください。</div>';
+    return;
+  }
+  const result=computeScore(sentences[index].en,spokenText);
+  const grade=getGrade(result.percentage);
+  const origHtml=result.origWords.map((w,i)=>
+    result.origMatched.has(i)
+      ?`<span class="match">${w}</span>`
+      :`<span class="miss">${w}</span>`
+  ).join(' ');
+  resultEl.classList.add('show');
+  resultEl.innerHTML=`
+    <div class="result-row">
+      <div class="result-score" style="color:${grade.color}">${result.percentage}%</div>
+      <div class="result-grade"  style="color:${grade.color}">${grade.text}</div>
+    </div>
+    <div class="result-detail">${origHtml}
+      <div class="heard">あなたの発話: ${escapeHtml(spokenText)}</div>
+    </div>
+  `;
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+function normalizeText(text){
+  return text.toLowerCase()
+    .replace(/[‘’]/g,"'").replace(/[-]/g,' ')
+    .replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+}
+
+function fuzzyMatch(a,b){
+  if(a===b) return true;
+  if(a.length>=4&&b.length>=4){
+    const d=levenshtein(a,b);
+    if(d<=1) return true;
+    if(a.length>=7&&b.length>=5&&d<=2) return true;
+  }
+  return false;
+}
+
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>[i]);
+  for(let j=0;j<=n;j++) dp[0][j]=j;
+  for(let i=1;i<=m;i++)
+    for(let j=1;j<=n;j++)
+      dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+function computeScore(original,spoken){
+  const origWords=normalizeText(original).split(' ').filter(w=>w.length>0);
+  const spokenWords=normalizeText(spoken).split(' ').filter(w=>w.length>0);
+  const m=origWords.length,n=spokenWords.length;
+  const dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=1;i<=m;i++)
+    for(let j=1;j<=n;j++)
+      dp[i][j]=fuzzyMatch(origWords[i-1],spokenWords[j-1])
+        ?dp[i-1][j-1]+1
+        :Math.max(dp[i-1][j],dp[i][j-1]);
+  const lcs=dp[m][n];
+  const origMatched=new Set(),spokenMatched=new Set();
+  let i=m,j=n;
+  while(i>0&&j>0){
+    if(fuzzyMatch(origWords[i-1],spokenWords[j-1])){origMatched.add(i-1);spokenMatched.add(j-1);i--;j--;}
+    else if(dp[i-1][j]>dp[i][j-1]) i--;
+    else j--;
+  }
+  const rawRatio=m>0?lcs/m:0;
+  let pct;
+  if(rawRatio>=.95) pct=95+(rawRatio-.95)*100;
+  else if(rawRatio>=.7) pct=75+(rawRatio-.7)*(20/.25);
+  else if(rawRatio>=.4) pct=55+(rawRatio-.4)*(20/.3);
+  else if(rawRatio>=.15) pct=35+(rawRatio-.15)*(20/.25);
+  else pct=10+(rawRatio/.15)*25;
+  return{percentage:Math.min(100,Math.round(pct)),matched:lcs,total:m,origWords,origMatched,spokenMatched};
+}
+
+function getGrade(pct){
+  if(pct>=95) return{text:'🌟 Excellent!',color:'#4caf50'};
+  if(pct>=85) return{text:'🎉 Great!',color:'#66bb6a'};
+  if(pct>=75) return{text:'👍 Well done!',color:'#8bc34a'};
+  if(pct>=60) return{text:'💪 Good effort!',color:'#ffd166'};
+  if(pct>=45) return{text:'🔥 Nice try!',color:'#ff7043'};
+  return{text:'📚 Keep going!',color:'#ef5350'};
+}
+</script>
+</body>
+</html>
